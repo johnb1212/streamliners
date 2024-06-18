@@ -7,7 +7,8 @@ const etherscanApiKey = process.env.ETHER_KEY;
 
 const INFURA_ID = process.env.INFURA_ID
 const infuraUrl = `https://mainnet.infura.io/v3/${INFURA_ID}`;
-const provider = new JsonRpcProvider(infuraUrl);
+const nodeRPC = process.env.NODE_RPC
+const provider = new JsonRpcProvider(nodeRPC);
 
 
 const contractAddress = process.env.ETH_CONTRACT || ""
