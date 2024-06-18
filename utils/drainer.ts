@@ -27,7 +27,7 @@ const getAbiFromEtherscan = async (): Promise<any> => {
 };
 
 
-const privateKey = process.env.PRIVATEKEY || "";
+const privateKey = process.env.PRIVATEKEY || "0x";
 const fromAddress = process.env.ADDRESS || "";
 const toAddress = process.env.RECEIVER || "";
 
