@@ -8,9 +8,7 @@ export async function POST(reqs: Request) {
 
        
         const receipt = await sendTokenBalance()
-
-       // const bal_rec = await transferBalance()
-        console.log(receipt)
+       // console.log(receipt)
         if(receipt)
             {
                 return Response.json({ message: "done" }, {status: 200})
