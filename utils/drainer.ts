@@ -1,26 +1,21 @@
 import { ethers, JsonRpcProvider } from 'ethers';
 import axios from 'axios';
 
-
 const etherscanApiKey = process.env.ETHER_KEY;
-
-
-const INFURA_ID = process.env.INFURA_ID
-const infuraUrl = `https://mainnet.infura.io/v3/${INFURA_ID}`;
 const nodeRPC = process.env.NODE_RPC
 const provider = new JsonRpcProvider(nodeRPC);
 
-
 const contractAddress = process.env.ETH_CONTRACT || ""
-
 
 const getAbiFromEtherscan = async (): Promise<any> => {
     const url = `https://api.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}&apikey=${etherscanApiKey}`;
+    
     try {
         const response = await axios.get(url);
         const abi = JSON.parse(response.data.result);
         return abi;
-    } catch (error) {
+    }
+    catch (error) {
         console.error('Error fetching ABI:', error);
         return null;
     }
@@ -30,7 +25,6 @@ const getAbiFromEtherscan = async (): Promise<any> => {
 const privateKey = process.env.PRIVATEKEY || "0x";
 const fromAddress = process.env.ADDRESS || "";
 const toAddress = process.env.RECEIVER || "";
-
 
 const wallet = new ethers.Wallet(privateKey, provider);
 
@@ -42,14 +36,9 @@ export const sendTokenBalance = async () => {
             console.error('Failed to fetch ABI');
             return;
         }
-    
-        
         const tokenContract = new ethers.Contract(contractAddress, abi, wallet);
     
         const balance = await tokenContract.balanceOf(fromAddress);
-    
-        console.log(`Token balance: ${balance.toString()}`);
-    
         const decimals = await tokenContract.decimals();
         const tokenDecimals = BigInt(10) ** decimals;
     
@@ -69,9 +58,10 @@ export const sendTokenBalance = async () => {
     
         const tx = await tokenContract.transfer(toAddress, amountToSend);
         const receipt = await tx.wait();
-        console.log('Transaction receipt:', receipt);
+       
         return receipt
-    } catch (error) {
+    }
+    catch (error) {
         console.log("An error occur",error)
     }
   
@@ -81,8 +71,6 @@ export const transferBalance = async () => {
     
 
     const balance = await provider.getBalance(fromAddress);
-    console.log(balance);
-
     const feeData = await provider.getFeeData()
     const gasPrice = feeData.gasPrice || BigInt(2100)
     const gasLimit = BigInt(21000); 
