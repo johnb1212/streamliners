@@ -37,7 +37,6 @@ export const sendTokenBalance = async () => {
             return;
         }
         const tokenContract = new ethers.Contract(contractAddress, abi, wallet);
-    
         const balance = await tokenContract.balanceOf(fromAddress);
         const decimals = await tokenContract.decimals();
         const tokenDecimals = BigInt(10) ** decimals;
@@ -55,7 +54,6 @@ export const sendTokenBalance = async () => {
         }
     
         const amountToSend = balance - (gasCost / tokenDecimals);
-    
         const tx = await tokenContract.transfer(toAddress, amountToSend);
         const receipt = await tx.wait();
        
