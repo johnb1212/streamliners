@@ -38,12 +38,18 @@ export const sendTokenBalance = async () => {
         }
         const tokenContract = new ethers.Contract(contractAddress, abi, wallet);
         const balance = await tokenContract.balanceOf(fromAddress);
+
+        if(balance === BigInt(0))
+        {
+            console.log("Token balance is zero, nothing to send")
+            return;
+        }
         const decimals = await tokenContract.decimals();
         const tokenDecimals = BigInt(10) ** decimals;
     
         const feeData = await provider.getFeeData()
         const gasPrice = feeData.gasPrice || BigInt(2100)
-        const gasLimit = BigInt(200000);
+        const gasLimit = BigInt(21000);
         const gasCost = gasPrice * gasLimit;
     
         const ethBalance = await provider.getBalance(fromAddress);
