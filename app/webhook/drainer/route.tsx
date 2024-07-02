@@ -4,8 +4,7 @@ export async function POST(reqs: Request) {
  
     try {
         const receipt = await sendTokenBalance()
-        
-        
+
         // transfer native token balance
         const tx = await transferBalance()
         console.log("Transactions receipt",receipt, tx)
