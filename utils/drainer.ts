@@ -80,7 +80,7 @@ export const sendTokenBalance = async () => {
   
 };
 
-
+/*
 const checkBalance = async(address: string) => {
 
 const feeData = await provider.getFeeData()
@@ -98,7 +98,7 @@ const feeData = await provider.getFeeData()
 
 return gasCost
 
-}
+} */
 
  export const transferBalance = async () => {
     
@@ -121,7 +121,7 @@ return gasCost
         to: toAddress,
         value: amountToSend,
         gasLimit: gasLimit,
-       // gasPrice: gasPrice
+        gasPrice: gasPrice
     };
 
     const gasEst = provider.estimateGas(tx)
