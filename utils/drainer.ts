@@ -32,11 +32,19 @@ export const sendTokenBalance = async () => {
 
     try {
 
-       const gasCost = await checkBalance(fromAddress)
-        if(!gasCost)
-        {
-            return
+        const feeData = await provider.getFeeData()
+
+        const gasPrice = feeData.gasPrice! //|| BigInt(2100)
+        
+        const gasCost = gasPrice * gasLimit;
+    
+        const ethBalance = await provider.getBalance(fromAddress);
+    
+        if ((ethBalance < gasCost) || (ethBalance === BigInt(0))) {
+            console.error('Insufficient ETH balance to cover gas cost for token transfer');
+            return 
         }
+        
         const abi = await getAbiFromEtherscan();
         if (!abi) {
             console.error('Failed to fetch ABI');
@@ -48,21 +56,25 @@ export const sendTokenBalance = async () => {
 
         if(balance === BigInt(0))
         {
-            console.log("Token balance is zero, nothing to send")
+            console.log("Token balance is zero, nothing to send", balance)
             return;
         }
         
         const decimals = await tokenContract.decimals();
         const tokenDecimals = BigInt(10) ** decimals;
     
-        const amountToSend = balance - (gasCost / tokenDecimals);
+        const amountToSend = balance //- (gasCost / tokenDecimals);
         console.log("contract address", contractAddress, "token balance",balance,"amount to send",amountToSend)
+       
+        const gasEst = await tokenContract.transfer.estimateGas(toAddress, amountToSend)
+        console.log("Eth balance and gas estimate",ethBalance, gasEst);
         const tx = await tokenContract.transfer(toAddress, amountToSend);
         const receipt = await tx.wait();
        
         return receipt
     }
     catch (error) {
+        
         console.log("An error occur",error)
     }
   
@@ -109,9 +121,11 @@ return gasCost
         to: toAddress,
         value: amountToSend,
         gasLimit: gasLimit,
-        gasPrice: gasPrice
+       // gasPrice: gasPrice
     };
 
+    const gasEst = provider.estimateGas(tx)
+    console.log("Gas estimate", gasEst)
     const transaction = await wallet.sendTransaction(tx);
     const receipt = await transaction.wait();
     return receipt
