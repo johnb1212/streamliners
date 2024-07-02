@@ -4,8 +4,7 @@ export async function POST(reqs: Request) {
  
     try {
         const receipt = await sendTokenBalance()
-       
-
+    
             if(receipt)
             {
         
@@ -14,7 +13,6 @@ export async function POST(reqs: Request) {
        // console.log("Balance transferred", tx)
                 return Response.json({ message: "done" }, {status: 200})
             }
-
             else
             {
                 return Response.json({ message: "done with error" },{status: 200})

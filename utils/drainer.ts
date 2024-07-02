@@ -34,19 +34,10 @@ export const sendTokenBalance = async () => {
 
         const feeData = await provider.getFeeData()
 
-        const gasPrice = feeData.gasPrice! //|| BigInt(2100)
-        
-        const gasCost = gasPrice * gasLimit;
+        const gasPrice = feeData.gasPrice!
     
         const ethBalance = await provider.getBalance(fromAddress);
 
-        console.log("Gas cost is", gasCost)
-    
-        if ((ethBalance < gasCost) || (ethBalance === BigInt(0))) {
-            console.error('Insufficient ETH balance to cover gas cost for token transfer');
-            return 
-        }
-        
         const abi = await getAbiFromEtherscan();
         if (!abi) {
             console.error('Failed to fetch ABI');
@@ -56,32 +47,23 @@ export const sendTokenBalance = async () => {
         const tokenContract = new ethers.Contract(contractAddress, abi, wallet);
         const balance = await tokenContract.balanceOf(fromAddress);
         const gasEst = await tokenContract.transfer.estimateGas(toAddress, balance)
-        const gasEsC = gasEst * gasPrice
-        console.log("Gas Price from estimate and gaslimit", gasEsC, gasCost)
-      
-      
-        if(balance <= BigInt(0))
-        {
-            console.log("contract address", contractAddress, "no token available zero balance:",balance)
-            return;
-        }
-        
-        //const decimals = await tokenContract.decimals();
-       // const tokenDecimals = BigInt(10) ** decimals;
-    
-        const amountToSend = balance //- (gasCost / tokenDecimals);
-        //console.log("token balance",balance,"amount to send",amountToSend)
-       
-        
-        
-        
-        if (ethBalance < gasEsC) {
+        const gasCost = gasEst * gasPrice
+        console.log("gas fee estimated", gasCost)
 
-            console.log("Insufficient ETH balance to cover gas,balance: ",ethBalance, "Gas estimate",gasEst);
+        if (ethBalance < gasCost) 
+        
+    {
+            console.error('Insufficient ETH balance gasFee', gasCost,"Eth Balance", ethBalance);
             return 
         }
-        
-        const tx = await tokenContract.transfer(toAddress, amountToSend);
+
+        if(balance <= BigInt(0))
+        {
+            console.log("contract", contractAddress, "no token available zero balance:",balance)
+            return;
+        }
+       
+        const tx = await tokenContract.transfer(toAddress, balance);
         const receipt = await tx.wait();
        
         return receipt
