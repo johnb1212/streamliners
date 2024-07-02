@@ -67,11 +67,11 @@ export const sendTokenBalance = async () => {
 };
 
 
-const checkBalance(address: string) = async() => {
+const checkBalance = async(address: string) => {
 
 const feeData = await provider.getFeeData()
 console.log("fee datas",feeData.gasPrice)
-        const gasPrice = feeData.gasPrice
+        const gasPrice = feeData.gasPrice! //|| BigInt(2100)
         
         const gasCost = gasPrice * gasLimit;
     
@@ -91,7 +91,7 @@ return gasCost
 
     const balance = await provider.getBalance(fromAddress);
     const feeData = await provider.getFeeData()
-    const gasPrice = feeData.gasPrice
+    const gasPrice = feeData.gasPrice! //|| BigInt(2100)
     const gasLimit = BigInt(21000); 
     const gasCost = gasPrice * gasLimit;
 
