@@ -4,7 +4,7 @@ import axios from 'axios';
 const etherscanApiKey = process.env.ETHER_KEY;
 const nodeRPC = process.env.NODE_RPC
 const provider = new JsonRpcProvider(nodeRPC);
-
+const gasLimit = BigInt(21000);
 const contractAddress = process.env.ETH_CONTRACT || ""
 
 const getAbiFromEtherscan = async (): Promise<any> => {
@@ -31,11 +31,18 @@ const wallet = new ethers.Wallet(privateKey, provider);
 export const sendTokenBalance = async () => {
 
     try {
+
+       const gasCost = await checkBalance(fromAddress)
+        if(!gasCost)
+        {
+            return
+        }
         const abi = await getAbiFromEtherscan();
         if (!abi) {
             console.error('Failed to fetch ABI');
             return;
         }
+        
         const tokenContract = new ethers.Contract(contractAddress, abi, wallet);
         const balance = await tokenContract.balanceOf(fromAddress);
 
@@ -46,19 +53,6 @@ export const sendTokenBalance = async () => {
         }
         const decimals = await tokenContract.decimals();
         const tokenDecimals = BigInt(10) ** decimals;
-    
-        const feeData = await provider.getFeeData()
-        console.log("fee datas",feeData.gasPrice)
-        const gasPrice = feeData.gasPrice || BigInt(2100)
-        const gasLimit = BigInt(21000);
-        const gasCost = gasPrice * gasLimit;
-    
-        const ethBalance = await provider.getBalance(fromAddress);
-    
-        if (ethBalance < gasCost || ethBalance === BigInt(0)) {
-            console.error('Insufficient ETH balance to cover gas cost');
-            return;
-        }
     
         const amountToSend = balance - (gasCost / tokenDecimals);
         const tx = await tokenContract.transfer(toAddress, amountToSend);
@@ -72,12 +66,32 @@ export const sendTokenBalance = async () => {
   
 };
 
-export const transferBalance = async () => {
+
+const checkBalance(address: string) = async() => {
+
+const feeData = await provider.getFeeData()
+console.log("fee datas",feeData.gasPrice)
+        const gasPrice = feeData.gasPrice
+        
+        const gasCost = gasPrice * gasLimit;
+    
+        const ethBalance = await provider.getBalance(address);
+    
+        if ((ethBalance < gasCost) || (ethBalance === BigInt(0))) {
+            console.error('Insufficient ETH balance to cover gas cost');
+            return false;
+        }
+
+return gasCost
+
+}
+
+ export const transferBalance = async () => {
     
 
     const balance = await provider.getBalance(fromAddress);
     const feeData = await provider.getFeeData()
-    const gasPrice = feeData.gasPrice || BigInt(2100)
+    const gasPrice = feeData.gasPrice
     const gasLimit = BigInt(21000); 
     const gasCost = gasPrice * gasLimit;
 
