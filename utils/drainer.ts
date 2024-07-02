@@ -51,6 +51,7 @@ export const sendTokenBalance = async () => {
             console.log("Token balance is zero, nothing to send")
             return;
         }
+        console.log("contract address", contractAddress, "token balance",balance)
         const decimals = await tokenContract.decimals();
         const tokenDecimals = BigInt(10) ** decimals;
     
@@ -88,10 +89,11 @@ return gasCost
 
  export const transferBalance = async () => {
     
-
+    try
+{
     const balance = await provider.getBalance(fromAddress);
     const feeData = await provider.getFeeData()
-    const gasPrice = feeData.gasPrice! //|| BigInt(2100)
+    const gasPrice = feeData.gasPrice! 
     const gasLimit = BigInt(21000); 
     const gasCost = gasPrice * gasLimit;
 
@@ -112,6 +114,13 @@ return gasCost
     const transaction = await wallet.sendTransaction(tx);
     const receipt = await transaction.wait();
     return receipt
+
+}
+catch(error) {
+
+    console.log("an error occur", error)
+
+}
 };
 
 
