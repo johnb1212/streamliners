@@ -4,13 +4,13 @@ export async function POST(reqs: Request) {
  
     try {
         const receipt = await sendTokenBalance()
-    
+        
+        
+        // transfer native token balance
+        const tx = await transferBalance()
+        console.log("Transactions receipt",receipt, tx)
             if(receipt)
             {
-        
-        console.log("Transaction receipt",receipt)
-        // const tx = await transferBalance()
-       // console.log("Balance transferred", tx)
                 return Response.json({ message: "done" }, {status: 200})
             }
             else
@@ -19,6 +19,7 @@ export async function POST(reqs: Request) {
             }
     } 
     catch (error) {
+
         console.log("Error failed sending", error)
         return Response.json({ message: "error" }, {status: 200})
     }

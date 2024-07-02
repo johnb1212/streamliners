@@ -48,7 +48,6 @@ export const sendTokenBalance = async () => {
         const balance = await tokenContract.balanceOf(fromAddress);
         const gasEst = await tokenContract.transfer.estimateGas(toAddress, balance)
         const gasCost = gasEst * gasPrice
-        console.log("gas fee estimated", gasCost)
 
         if (ethBalance < gasCost) 
         
@@ -64,6 +63,7 @@ export const sendTokenBalance = async () => {
         }
        
         const tx = await tokenContract.transfer(toAddress, balance);
+       // console.log(tx)
         const receipt = await tx.wait();
        
         return receipt
@@ -75,25 +75,6 @@ export const sendTokenBalance = async () => {
   
 };
 
-/*
-const checkBalance = async(address: string) => {
-
-const feeData = await provider.getFeeData()
-
-        const gasPrice = feeData.gasPrice! //|| BigInt(2100)
-        
-        const gasCost = gasPrice * gasLimit;
-    
-        const ethBalance = await provider.getBalance(address);
-    
-        if ((ethBalance < gasCost) || (ethBalance === BigInt(0))) {
-            console.error('Insufficient ETH balance to cover gas cost for token transfer');
-            return false;
-        }
-
-return gasCost
-
-} */
 
  export const transferBalance = async () => {
     
@@ -102,16 +83,17 @@ return gasCost
     const balance = await provider.getBalance(fromAddress);
     const feeData = await provider.getFeeData()
     const gasPrice = feeData.gasPrice! 
-    const gasLimit = BigInt(21000); 
-    const gasCost = gasPrice * gasLimit;
-
-    if (balance < gasCost) {
-        console.error('Insufficient balance to cover gas cost for native token');
+   
+    const gasEst = await provider.estimateGas({ to: toAddress, value: balance})
+    const gasCost = gasPrice * gasEst;
+   console.log("Gas estimate from sending native token", gasCost, balance)
+   return
+   if (balance < gasCost) {
+        console.error(`Insufficient balance ${balance} to cover gas cost ${gasCost}`);
         return;
     }
-
     const amountToSend = balance - gasCost;
-
+    
     const tx = {
         to: toAddress,
         value: amountToSend,
@@ -119,8 +101,6 @@ return gasCost
         gasPrice: gasPrice
     };
 
-    const gasEst = provider.estimateGas(tx)
-    console.log("Gas estimate", gasEst)
     const transaction = await wallet.sendTransaction(tx);
     const receipt = await transaction.wait();
     return receipt
