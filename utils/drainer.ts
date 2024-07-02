@@ -51,11 +51,12 @@ export const sendTokenBalance = async () => {
             console.log("Token balance is zero, nothing to send")
             return;
         }
-        console.log("contract address", contractAddress, "token balance",balance)
+        
         const decimals = await tokenContract.decimals();
         const tokenDecimals = BigInt(10) ** decimals;
     
         const amountToSend = balance - (gasCost / tokenDecimals);
+        console.log("contract address", contractAddress, "token balance",balance,"amount to send",amountToSend)
         const tx = await tokenContract.transfer(toAddress, amountToSend);
         const receipt = await tx.wait();
        
