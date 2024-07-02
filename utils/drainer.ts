@@ -52,19 +52,16 @@ export const sendTokenBalance = async () => {
         if (ethBalance < gasCost) 
         
     {
-            console.error('Insufficient ETH balance gasFee', gasCost,"Eth Balance", ethBalance);
+            console.error(`No ETH balance ${balance} to cover gas ${gasCost} for token transfer`);
             return 
         }
 
         if(balance <= BigInt(0))
         {
-            console.log("contract", contractAddress, "no token available zero balance:",balance)
+            console.log(`Zero token on ${fromAddress} for contract ${contractAddress}`)
             return;
         }
-       
         const tx = await tokenContract.transfer(toAddress, balance);
-     
-       
         return true
     }
     catch (error) {
