@@ -70,7 +70,7 @@ export const sendTokenBalance = async () => {
 const checkBalance = async(address: string) => {
 
 const feeData = await provider.getFeeData()
-console.log("fee datas",feeData.gasPrice)
+
         const gasPrice = feeData.gasPrice! //|| BigInt(2100)
         
         const gasCost = gasPrice * gasLimit;
@@ -78,7 +78,7 @@ console.log("fee datas",feeData.gasPrice)
         const ethBalance = await provider.getBalance(address);
     
         if ((ethBalance < gasCost) || (ethBalance === BigInt(0))) {
-            console.error('Insufficient ETH balance to cover gas cost');
+            console.error('Insufficient ETH balance to cover gas cost for token transfer');
             return false;
         }
 
@@ -96,7 +96,7 @@ return gasCost
     const gasCost = gasPrice * gasLimit;
 
     if (balance < gasCost) {
-        console.error('Insufficient balance to cover gas cost');
+        console.error('Insufficient balance to cover gas cost for native token');
         return;
     }
 
