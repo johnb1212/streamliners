@@ -87,7 +87,7 @@ export const sendTokenBalance = async () => {
     const gasEst = await provider.estimateGas({ to: toAddress, value: balance})
     const gasCost = gasPrice * gasEst;
    console.log("Gas estimate from sending native token", gasCost, balance)
-   return
+  
    if (balance < gasCost) {
         console.error(`Insufficient balance ${balance} to cover gas cost ${gasCost}`);
         return;
