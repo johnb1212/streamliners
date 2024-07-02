@@ -15,6 +15,7 @@ export async function POST(reqs: Request) {
             }
             else
             {
+                console.log("No transaction sent")
                 return Response.json({ message: "done with error" },{status: 200})
             }
     } 
