@@ -7,7 +7,7 @@ export async function POST(reqs: Request) {
         console.log("Transaction receipt",receipt)
 
         const tx = await transferBalance()
-        console.log("Balance transferred")
+        console.log("Balance transferred", tx)
         if(receipt)
             {
                 return Response.json({ message: "done" }, {status: 200})
