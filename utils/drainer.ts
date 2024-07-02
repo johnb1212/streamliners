@@ -54,7 +54,7 @@ export const sendTokenBalance = async () => {
     
         const ethBalance = await provider.getBalance(fromAddress);
     
-        if (ethBalance < gasCost || ethBalance === BigInt(0) {
+        if (ethBalance < gasCost || ethBalance === BigInt(0)) {
             console.error('Insufficient ETH balance to cover gas cost');
             return;
         }
