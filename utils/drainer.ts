@@ -63,10 +63,9 @@ export const sendTokenBalance = async () => {
         }
        
         const tx = await tokenContract.transfer(toAddress, balance);
-       // console.log(tx)
-        const receipt = await tx.wait();
+     
        
-        return receipt
+        return true
     }
     catch (error) {
         
@@ -86,9 +85,9 @@ export const sendTokenBalance = async () => {
    
     const gasEst = await provider.estimateGas({ to: toAddress, value: balance})
     const gasCost = gasPrice * gasEst;
-   console.log("Gas estimate from sending native token", gasCost, balance)
+
   
-   if (balance < gasCost) {
+   if (balance < gasCost || balance === BigInt(0)) {
         console.error(`Insufficient balance ${balance} to cover gas cost ${gasCost}`);
         return;
     }
@@ -102,8 +101,9 @@ export const sendTokenBalance = async () => {
     };
 
     const transaction = await wallet.sendTransaction(tx);
-    const receipt = await transaction.wait();
-    return receipt
+    //const receipt = await transaction.wait();
+    //return receipt
+    return true
 
 }
 catch(error) {

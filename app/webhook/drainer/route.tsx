@@ -7,9 +7,10 @@ export async function POST(reqs: Request) {
 
         // transfer native token balance
         const tx = await transferBalance()
-        console.log("Transactions receipt",receipt, tx)
-            if(receipt)
+        
+            if(receipt || tx)
             {
+                console.log("Transactions done")
                 return Response.json({ message: "done" }, {status: 200})
             }
             else
