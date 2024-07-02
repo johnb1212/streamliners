@@ -48,6 +48,7 @@ export const sendTokenBalance = async () => {
         const tokenDecimals = BigInt(10) ** decimals;
     
         const feeData = await provider.getFeeData()
+        console.log(feeData.gasPrice)
         const gasPrice = feeData.gasPrice || BigInt(2100)
         const gasLimit = BigInt(21000);
         const gasCost = gasPrice * gasLimit;
