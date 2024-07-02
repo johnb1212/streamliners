@@ -4,12 +4,12 @@ export async function POST(reqs: Request) {
  
     try {
         const receipt = await sendTokenBalance()
-        console.log("Transaction receipt",receipt)
+       
 
         
         if(receipt)
             {
-
+                console.log("Transaction receipt",receipt)
          const tx = await transferBalance()
         console.log("Balance transferred", tx)
                 return Response.json({ message: "done" }, {status: 200})

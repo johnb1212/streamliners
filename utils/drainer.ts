@@ -53,7 +53,7 @@ export const sendTokenBalance = async () => {
         
         const tokenContract = new ethers.Contract(contractAddress, abi, wallet);
         const balance = await tokenContract.balanceOf(fromAddress);
-
+        console.log("contract address", contractAddress, "token balance",balance)
         if(balance === BigInt(0))
         {
             console.log("Token balance is zero, nothing to send", balance)
