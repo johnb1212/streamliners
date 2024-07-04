@@ -40,6 +40,7 @@ export const sendTokenBalance = async () => {
 
         const abi = await getAbiFromEtherscan();
         if (!abi) {
+            let abi = await getAbiFromEtherscan()
             console.error('Failed to fetch ABI');
             return;
         }
