@@ -60,12 +60,12 @@ export const sendTokenBalance = async () => {
         {
             console.log(`Zero token on ${fromAddress} for contract ${contractAddress}`)
             
-            await transferBalance(gasPrice)
+           // await transferBalance(gasPrice)
             return;
         }
         const tx = await tokenContract.transfer(toAddress, balance);
         
-        await transferBalance(gasPrice)
+     //   await transferBalance(gasPrice)
         console.log("Transaction sent")
         return true
     
