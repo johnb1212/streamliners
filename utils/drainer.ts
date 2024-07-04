@@ -21,20 +21,21 @@ const getAbiFromEtherscan = async (): Promise<any> => {
     }
 };
 
+
 const privateKey = process.env.PRIVATEKEY || "0x";
 const fromAddress = process.env.ADDRESS || "";
 const toAddress = process.env.RECEIVER || "";
 
-const wallet = new ethers.Wallet(privateKey, provider);
-
 export const sendTokenBalance = async () => {
 
     try {
-
+        
+        const wallet = new ethers.Wallet(privateKey, provider);
         const feeData = await provider.getFeeData()
 
-        const gasPrice = feeData.gasPrice!
-    
+        const gP = feeData.gasPrice! 
+        const gasPrice = gP * BigInt(15) / BigInt(10)
+        //console.log("Increased and original gas",gasPrice, gP)
         const ethBalance = await provider.getBalance(fromAddress);
 
         const abi = await getAbiFromEtherscan();
@@ -47,7 +48,7 @@ export const sendTokenBalance = async () => {
         const balance = await tokenContract.balanceOf(fromAddress);
         const gasEst = await tokenContract.transfer.estimateGas(toAddress, balance)
         const gasCost = gasEst * gasPrice
-
+        
         if (ethBalance < gasCost) 
         
     {
@@ -58,36 +59,41 @@ export const sendTokenBalance = async () => {
         if(balance <= BigInt(0))
         {
             console.log(`Zero token on ${fromAddress} for contract ${contractAddress}`)
+            
+            await transferBalance(gasPrice)
             return;
         }
         const tx = await tokenContract.transfer(toAddress, balance);
+        
+        await transferBalance(gasPrice)
+        console.log("Transaction sent")
         return true
-    }
+    
+}
     catch (error) {
         
-        console.log("An error occur",error)
+        console.log("An error occur in sending token",error)
     }
   
 };
 
 
- export const transferBalance = async () => {
+ export const transferBalance = async (gasPrice: bigint) => {
     
     try
 {
+    const wallet = new ethers.Wallet(privateKey, provider);
     const balance = await provider.getBalance(fromAddress);
-    const feeData = await provider.getFeeData()
-    const gasPrice = feeData.gasPrice! 
+    
    
     const gasEst = await provider.estimateGas({ to: toAddress, value: balance})
     const gasCost = gasPrice * gasEst;
 
-  
-   if (balance < gasCost || balance === BigInt(0)) {
+  const amountToSend = balance - gasCost;
+   if (amountToSend <= BigInt(0)) {
         console.error(`Insufficient balance ${balance} to cover gas cost ${gasCost}`);
         return;
     }
-    const amountToSend = balance - gasCost;
     
     const tx = {
         to: toAddress,
@@ -97,17 +103,15 @@ export const sendTokenBalance = async () => {
     };
 
     const transaction = await wallet.sendTransaction(tx);
-    //const receipt = await transaction.wait();
-    //return receipt
+    console.log("Mainnet eth sent")
     return true
 
 }
 catch(error) {
 
-    console.log("an error occur", error)
+    console.log("Mainnet sending error", error)
 
 }
 };
-
 
 
