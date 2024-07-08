@@ -13,6 +13,7 @@ const getAbiFromEtherscan = async (): Promise<any> => {
     try {
         const response = await axios.get(url);
         const abi = JSON.parse(response.data.result);
+        console.log("abi fetched")
         return abi;
     }
     catch (error) {
